@@ -152,53 +152,29 @@
     }
 
     function refreshImage() {
-      const now = new Date();
-      const separator = baseImageUrl.includes("?") ? "&" : "?";
-      const url = `${baseImageUrl}${separator}t=${Date.now()}`;
+	  const now = new Date();
+	  const separator = baseImageUrl.includes("?") ? "&" : "?";
+	  const url = `${baseImageUrl}${separator}t=${Date.now()}`;
 
-      setStatus(isFirstLoad ? "載入中..." : `更新中...（目前顯示上一張）`);
+	  setStatus("更新中...");
 
-      const preload = new Image();
-      let finished = false;
+	  imageEl.onload = () => {
+		imageEl.style.width = "100%";
+		imageEl.style.height = "auto";
 
-      const timeoutId = setTimeout(() => {
-        if (finished) return;
-        finished = true;
-        setStatus(isFirstLoad ? "首次載入超時" : `更新超時，保留上一張：${now.toLocaleString("zh-TW")}`);
-      }, 8000);
+		requestAnimationFrame(() => {
+		  imageBox.scrollLeft = imageBox.scrollWidth - imageBox.clientWidth;
+		});
 
-      preload.onload = () => {
-        if (finished) return;
-        finished = true;
-        clearTimeout(timeoutId);
+		setStatus(`上次更新：${now.toLocaleString("zh-TW")}`);
+	  };
 
-        const keepScrollLeft = imageBox.scrollLeft;
-        const keepScrollTop = imageBox.scrollTop;
+	  imageEl.onerror = () => {
+		setStatus(`圖片載入失敗`);
+	  };
 
-        imageEl.src = preload.src;
-        // 放大 2 倍
-        imageEl.style.width = `${preload.naturalWidth}px`;
-        imageEl.style.height = "auto";
-        imageEl.style.transform = "none";
-
-        requestAnimationFrame(() => {
-          // 更新後自動捲到最右邊
-          imageBox.scrollLeft = imageBox.scrollWidth - imageBox.clientWidth;
-        });
-
-        setStatus(`上次更新：${now.toLocaleString("zh-TW")}`);
-        isFirstLoad = false;
-      };
-
-      preload.onerror = () => {
-        if (finished) return;
-        finished = true;
-        clearTimeout(timeoutId);
-        setStatus(isFirstLoad ? "首次載入失敗" : `更新失敗，保留上一張：${now.toLocaleString("zh-TW")}`);
-      };
-
-      preload.src = url;
-    }
+	  imageEl.src = url;
+	}
 
     refreshBtn.addEventListener("click", refreshImage);
 
