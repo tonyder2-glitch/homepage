@@ -45,17 +45,22 @@ p {
 .image-box {
   margin-top: 20px;
   width: 100%;
+  height: 140vh;
   overflow-x: auto;
   overflow-y: auto;
+  display: block;
   background: #1b1b1b;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
+}
 
 img {
   display: block;
-  width: 100%;
+  width: auto;
   height: auto;
+  max-width: none;
+  max-height: none;
 }
 
 .meta {
@@ -144,11 +149,17 @@ button {
       imageEl.referrerPolicy = "no-referrer";
 
       imageEl.onload = () => {
-        requestAnimationFrame(() => {
-          imageBox.scrollLeft = imageBox.scrollWidth - imageBox.clientWidth;
-        });
-        setStatus(`上次更新：${now.toLocaleString("zh-TW")}`);
-      };
+	  imageEl.style.width = `${imageEl.naturalWidth}px`;
+	  imageEl.style.height = `${imageEl.naturalHeight}px`;
+	  imageEl.style.transform = "none";
+
+	  requestAnimationFrame(() => {
+		imageBox.scrollLeft = imageBox.scrollWidth - imageBox.clientWidth;
+		imageBox.scrollTop = 0;
+	  });
+
+	  setStatus(`上次更新：${now.toLocaleString("zh-TW")}`);
+	};
 
       imageEl.onerror = () => {
         setStatus("圖片載入失敗");
