@@ -1,19 +1,167 @@
 <!doctype html>
+
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>圖片測試</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>自動更新圖片頁面</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+    }
+
+```
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #111;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 16px;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.wrap {
+  width: 100%;
+  max-width: 2400px;
+  text-align: center;
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+}
+
+p {
+  margin: 0;
+  opacity: 0.8;
+}
+
+.image-box {
+  margin-top: 20px;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  background: #1b1b1b;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.meta {
+  margin-top: 12px;
+  font-size: 14px;
+  opacity: 0.75;
+}
+
+button {
+  margin-top: 12px;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.note-box {
+  margin-top: 20px;
+  padding: 18px 22px;
+  background: #1b1b1b;
+  border-radius: 14px;
+  text-align: left;
+  line-height: 1.8;
+  font-size: 15px;
+  color: #eee;
+}
+
+.note-box h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+}
+
+.note-box p {
+  margin: 6px 0;
+  opacity: 0.9;
+}
+
+.blue { color: #4da3ff; }
+.orange { color: #ff9f43; }
+```
+
+  </style>
 </head>
-<body style="background:#111; color:#fff; text-align:center;">
+<body>
+  <div class="wrap">
+    <h1>即時圖片看板</h1>
+    <p>每 60 秒自動更新一次</p>
 
-  <h2>圖片測試</h2>
+```
+<div class="image-box">
+  <img id="liveImage" alt="即時更新圖片" referrerpolicy="no-referrer" />
+</div>
 
-  <img 
-    src="https://lh3.googleusercontent.com/d/1cjgZRcPDkmCGkrvmcqAFqsoltBbvUpm0"
-    referrerpolicy="no-referrer"
-    style="width:90%; max-width:1200px;"
-  >
+<div class="note-box">
+  <h2>圖表說明</h2>
+  <p><strong class="blue">藍色線</strong>：期貨價格</p>
+  <p><strong class="orange">橘色線</strong>：OP 價格</p>
+  <p>OP 開盤時，價格常會出現向上或向下的瞬間突波。</p>
+  <p><strong>向上突波</strong>通常代表賣方壓力集中在 <strong>SC</strong>；期貨應在 OP 下方，否則為<strong>嘎空</strong>。</p>
+  <p><strong>向下突波</strong>通常代表賣方壓力集中在 <strong>SP</strong>；期貨應在 OP 上方，否則為<strong>殺多</strong>。</p>
+</div>
+
+<div class="meta" id="status">載入中...</div>
+<button id="refreshBtn">立即更新</button>
+```
+
+  </div>
+
+  <script>
+    const baseImageUrl = "https://lh3.googleusercontent.com/d/1cjgZRcPDkmCGkrvmcqAFqsoltBbvUpm0";
+
+    const imageEl = document.getElementById("liveImage");
+    const statusEl = document.getElementById("status");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const imageBox = document.querySelector(".image-box");
+
+    function setStatus(text) {
+      statusEl.textContent = text;
+    }
+
+    function refreshImage() {
+      const now = new Date();
+
+      setStatus("更新中...");
+      imageEl.referrerPolicy = "no-referrer";
+
+      imageEl.onload = () => {
+        requestAnimationFrame(() => {
+          imageBox.scrollLeft = imageBox.scrollWidth - imageBox.clientWidth;
+        });
+        setStatus(`上次更新：${now.toLocaleString("zh-TW")}`);
+      };
+
+      imageEl.onerror = () => {
+        setStatus("圖片載入失敗");
+      };
+
+      imageEl.src = baseImageUrl; // 🔥 不加 ?t
+    }
+
+    refreshBtn.addEventListener("click", refreshImage);
+
+    refreshImage();
+    setInterval(refreshImage, 60 * 1000);
+  </script>
 
 </body>
 </html>
