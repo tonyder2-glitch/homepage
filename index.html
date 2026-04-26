@@ -110,7 +110,7 @@
     <p>每 60 秒自動更新一次</p>
 
     <div class="image-box">
-      <img id="liveImage" alt="即時更新圖片" />
+      <img id="liveImage" alt="即時更新圖片" referrerpolicy="no-referrer" />
     </div>
 	<div class="note-box">
 	  <h2>圖表說明</h2>
@@ -157,7 +157,7 @@
 	  const url = `${baseImageUrl}${separator}t=${Date.now()}`;
 
 	  setStatus("更新中...");
-
+	  imageEl.referrerPolicy = "no-referrer";
 	  imageEl.onload = () => {
 		imageEl.style.width = "100%";
 		imageEl.style.height = "auto";
