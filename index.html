@@ -125,6 +125,7 @@ button {
   </div>
 
   <script>
+	//const baseImageUrl = "https://drive.google.com/uc?export=view&id=1cjgZRcPDkmCGkrvmcqAFqsoltBbvUpm0";
     const baseImageUrl = "https://lh3.googleusercontent.com/d/1cjgZRcPDkmCGkrvmcqAFqsoltBbvUpm0";
 	//const baseImageUrl = "https://lh3.googleusercontent.com/d/1hPZIqaVI336CAzUeM6QN4uLPnWH2UEng";
 
@@ -138,24 +139,25 @@ button {
     }
 
     function refreshImage() {
-      const now = new Date();
+	  const now = new Date();
 
-      setStatus("更新中...");
-      imageEl.referrerPolicy = "no-referrer";
+	  setStatus("更新中...");
+	  imageEl.referrerPolicy = "no-referrer";
 
-      imageEl.onload = () => {
-        requestAnimationFrame(() => {
-          imageBox.scrollLeft = imageBox.scrollWidth - imageBox.clientWidth;
-        });
-        setStatus(`上次更新：${now.toLocaleString("zh-TW")}`);
-      };
+	  imageEl.onload = () => {
+		requestAnimationFrame(() => {
+		  imageBox.scrollLeft = imageBox.scrollWidth - imageBox.clientWidth;
+		});
+		setStatus(`上次更新：${now.toLocaleString("zh-TW")}`);
+	  };
 
-      imageEl.onerror = () => {
-        setStatus("圖片載入失敗");
-      };
+	  imageEl.onerror = () => {
+		setStatus("圖片載入失敗");
+	  };
 
-      imageEl.src = baseImageUrl; // 🔥 不加 ?t
-    }
+	  imageEl.src = "";
+	  imageEl.src = `${baseImageUrl}?t=${Date.now()}`;
+	}
 
     refreshBtn.addEventListener("click", refreshImage);
 
